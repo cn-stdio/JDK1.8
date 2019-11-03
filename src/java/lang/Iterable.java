@@ -45,6 +45,7 @@ import java.util.function.Consumer;
  */
 public interface Iterable<T> {
     /**
+     * 返回一个迭代器
      * Returns an iterator over elements of type {@code T}.
      *
      * @return an Iterator.
