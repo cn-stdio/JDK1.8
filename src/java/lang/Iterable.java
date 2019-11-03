@@ -31,6 +31,7 @@ import java.util.Spliterators;
 import java.util.function.Consumer;
 
 /**
+ * 实现此接口允许对象成为“for-each loop”语句的目标
  * Implementing this interface allows an object to be the target of
  * the "for-each loop" statement. See
  * <strong>
