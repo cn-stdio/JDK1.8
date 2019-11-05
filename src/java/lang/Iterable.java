@@ -45,10 +45,12 @@ import java.util.function.Consumer;
  */
 public interface Iterable<T> {
     /**
-     * 返回一个迭代器
      * Returns an iterator over elements of type {@code T}.
      *
      * @return an Iterator.
+     *
+     * 返回一个迭代器对象
+     * 这个迭代器对象一般由各个集合类进行了内部实现，以完成对自身集合元素的迭代操作
      */
     Iterator<T> iterator();
 
@@ -70,6 +72,13 @@ public interface Iterable<T> {
      * @param action The action to be performed for each element
      * @throws NullPointerException if the specified action is null
      * @since 1.8
+     *
+     * 对每个集合元素执行给定操作，直到所有元素被处理或引发异常。
+     * 传入的Consumer类型是Java8新增的一个消费型函数式接口，为了支持Java8新增的Lombda表达式，通过方法的实现来执行具体操作。
+     * action 代表了具体的操作，可以这么理解，一个Consumer对象实例可以代表一个Lombda表达式所进行的操作。
+     * 比如可以传参为 (x) -> System.out.println(x); ，代表打印集合中每个元素的值。
+     * 此时，对应操作（action）就是打印语句 System.out.println(x);
+     * 而 accept() 方法的传参就是要对哪个对象进行操作，这里用for语句将集合中每个元素作为传参，表示对集合中的每个元素进行对应操作。
      */
     default void forEach(Consumer<? super T> action) {
         Objects.requireNonNull(action);
@@ -98,6 +107,10 @@ public interface Iterable<T> {
      * @return a {@code Spliterator} over the elements described by this
      * {@code Iterable}.
      * @since 1.8
+     *
+     * 主要用于对集合元素进行分割遍历。
+     * 通常每个集合中对其进行了自身的默认实现。
+     * Spliterator是一个可分割迭代器，目的是为了并行遍历元素。
      */
     default Spliterator<T> spliterator() {
         return Spliterators.spliteratorUnknownSize(iterator(), 0);

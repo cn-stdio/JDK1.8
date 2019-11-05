@@ -28,6 +28,11 @@ package java.util;
 import java.util.function.Consumer;
 
 /**
+ * 一个集合的迭代器。
+ * 迭代器替代Enumeration的两个原因：
+ * 1. 迭代器允许调用者在迭代期间从底层集合中删除元素，并具有明确定义的语义。
+ * 2. 方法名称得到改进（因为Enumeration中方法名都比较长）。
+ *
  * An iterator over a collection.  {@code Iterator} takes the place of
  * {@link Enumeration} in the Java Collections Framework.  Iterators
  * differ from enumerations in two ways:
@@ -58,6 +63,9 @@ public interface Iterator<E> {
      * return an element rather than throwing an exception.)
      *
      * @return {@code true} if the iteration has more elements
+     *
+     * 如果迭代有更多的元素，则返回true。
+     * 换句话说，如果next()返回一个元素而不是抛出一个异常，则返回true。
      */
     boolean hasNext();
 
@@ -66,6 +74,8 @@ public interface Iterator<E> {
      *
      * @return the next element in the iteration
      * @throws NoSuchElementException if the iteration has no more elements
+     *
+     * 返回迭代中的下一个元素
      */
     E next();
 
@@ -88,6 +98,10 @@ public interface Iterator<E> {
      *         yet been called, or the {@code remove} method has already
      *         been called after the last call to the {@code next}
      *         method
+     *
+     * 从底层集合中删除此迭代器返回的最后一个元素。
+     * 如果没有进行next()操作，则会抛出IllegalStateException异常，因为迭代器还未返回任何元素。
+     * 如果底层集合不支持动态删改元素(比如由 Arrays.asList() 方法转换的集合)，则调用该方法会抛出UnsupportedOperationException异常。
      */
     default void remove() {
         throw new UnsupportedOperationException("remove");
@@ -109,6 +123,12 @@ public interface Iterator<E> {
      * @param action The action to be performed for each element
      * @throws NullPointerException if the specified action is null
      * @since 1.8
+     *
+     * 对每个剩余元素执行给定的操作，直到所有元素都被处理或动作引发异常。
+     * 与forEach()方法基本一样。
+     * 唯一的一点差别是，因为遍历的是迭代器中的元素，所以第二次调用不会做任何事情。
+     * 一个使用场景是：遍历剩余的元素。
+     * 比如对指定集合的前几个元素用next()执行特定的操作，而后几个元素需要执行其他的操作，则用forEachRemaining来遍历剩余元素同时执行其他操作。
      */
     default void forEachRemaining(Consumer<? super E> action) {
         Objects.requireNonNull(action);
