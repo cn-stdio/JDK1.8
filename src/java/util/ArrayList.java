@@ -31,6 +31,8 @@ import java.util.function.UnaryOperator;
 import sun.misc.SharedSecrets;
 
 /**
+ * 是可以动态调整大小的List接口的实现。
+ * 实现了List接口中所有的操作，允许储存所有的元素（包括null）
  * Resizable-array implementation of the <tt>List</tt> interface.  Implements
  * all optional list operations, and permits all elements, including
  * <tt>null</tt>.  In addition to implementing the <tt>List</tt> interface,
@@ -107,10 +109,15 @@ import sun.misc.SharedSecrets;
 public class ArrayList<E> extends AbstractList<E>
         implements List<E>, RandomAccess, Cloneable, java.io.Serializable
 {
+    /**
+     * 序列化版本号
+     */
     private static final long serialVersionUID = 8683452581122892189L;
 
     /**
      * Default initial capacity.
+     * 数组的默认大小。
+     * 当一个ArrayList对象被创建时，默认大小为10
      */
     private static final int DEFAULT_CAPACITY = 10;
 

@@ -145,6 +145,9 @@ public interface Collection<E> extends Iterable<E> {
     // Query Operations
 
     /**
+     * 返回这个集合的元素数量。
+     * 如果这个集合持有的元素数量超过了Integer.MAX_VALUE（int类型的最大值），那么就返回Integer.MAX_VALUE。
+     *
      * Returns the number of elements in this collection.  If this collection
      * contains more than <tt>Integer.MAX_VALUE</tt> elements, returns
      * <tt>Integer.MAX_VALUE</tt>.
@@ -154,6 +157,8 @@ public interface Collection<E> extends Iterable<E> {
     int size();
 
     /**
+     * 判断该集合是否为空
+     *
      * Returns <tt>true</tt> if this collection contains no elements.
      *
      * @return <tt>true</tt> if this collection contains no elements
@@ -161,6 +166,11 @@ public interface Collection<E> extends Iterable<E> {
     boolean isEmpty();
 
     /**
+     * 如果这个集合包含指定的元素，返回true。
+     * 当集合中至少包含一个元素e，使得： o==null ? e==null : o.equals(e)
+     * 该情况也会返回 true
+     * 也就是说，传参o和集合中的元素e均为null，或者调用o的equals方法返回true时，该方法返回true。
+     *
      * Returns <tt>true</tt> if this collection contains the specified element.
      * More formally, returns <tt>true</tt> if and only if this collection
      * contains at least one element <tt>e</tt> such that
@@ -179,6 +189,9 @@ public interface Collection<E> extends Iterable<E> {
     boolean contains(Object o);
 
     /**
+     * 返回此集合中元素的迭代器（一般由各个集合自己实现）
+     * 返回的元素并不保证次序，除非具体的实现提供了次序的保证。
+     *
      * Returns an iterator over the elements in this collection.  There are no
      * guarantees concerning the order in which the elements are returned
      * (unless this collection is an instance of some class that provides a
@@ -189,6 +202,12 @@ public interface Collection<E> extends Iterable<E> {
     Iterator<E> iterator();
 
     /**
+     * 返回一个包含此集合所有元素的数组
+     * 如果此集合对其迭代器返回的元素顺序做出保证，此方法必须以相同的顺序返回元素
+     * 此方法返回的是一个数组拷贝（也就是说分配了一个新的数组），因此返回的数组将是“安全的”
+     * 该集合不保留对其的引用，因此调用者可以自由地修改返回的数组
+     * 该方法充当了一个在数组和集合API之间的桥梁
+     *
      * Returns an array containing all of the elements in this collection.
      * If this collection makes any guarantees as to what order its elements
      * are returned by its iterator, this method must return the elements in
@@ -207,6 +226,16 @@ public interface Collection<E> extends Iterable<E> {
     Object[] toArray();
 
     /**
+     * 返回一个包含该集合所有元素的数组。
+     * 返回的数组类型就是传入的数组的类型。
+     * 如果该集合的元素数量与传入的数组大小合适的话（集合元素数量比传入数组小或者一致），那么就返回传入的数组的引用。
+     * 否则，就返回一个新的数组，新数组的大小就是容器集合元素的数量。
+     *
+     * 如果传入的数组长度比该集合要大，那么返回的数组后面的位置都置为null
+     * 同样的，如果该集合的迭代器实现了元素有序，那么此方法返回的数组也保持相同的顺序
+     *
+     * 优于toArray()方法的一点是该方法允许你对返回数组的类型进行精确的控制，以达到降低分配消耗的目的。
+     *
      * Returns an array containing all of the elements in this collection;
      * the runtime type of the returned array is that of the specified array.
      * If the collection fits in the specified array, it is returned therein.
@@ -254,6 +283,14 @@ public interface Collection<E> extends Iterable<E> {
     // Modification Operations
 
     /**
+     * 确保此集合包含指定的元素（可选操作）
+     * 如果此集合因为调用了该方法而发生了改变的话，返回true
+     * （如果此集合不允许重复且已包含指定元素，返回false）
+     *
+     * 支持该操作的集合可能会限制入参，比如一些集合会不允许添加null元素或者限制添加元素的类型。
+     *
+     * 如果一个集合拒绝添加一个元素，那么只有两种情况：要么他已经包含该元素，要么他必须抛出异常而不是返回false。
+     *
      * Ensures that this collection contains the specified element (optional
      * operation).  Returns <tt>true</tt> if this collection changed as a
      * result of the call.  (Returns <tt>false</tt> if this collection does
@@ -289,6 +326,10 @@ public interface Collection<E> extends Iterable<E> {
     boolean add(E e);
 
     /**
+     * 从该集合中删除某个指定元素的单个实例（如果存在的话）
+     * 如果此集合由于调用该方法而发生了更改的话，返回true。
+     * 如果该集合包含一个或更多个相同的元素的话，当执行该方法时会按照Object.equals(e)来删除指定元素。
+     *
      * Removes a single instance of the specified element from this
      * collection, if it is present (optional operation).  More formally,
      * removes an element <tt>e</tt> such that
@@ -314,6 +355,11 @@ public interface Collection<E> extends Iterable<E> {
     // Bulk Operations
 
     /**
+     * 如果该集合包含传入集合的所有元素，返回true
+     * 当传入集合有多个重复元素时，看具体集合类的实现
+     * 比如ArrayList就是按一个元素来算
+     * 在ArrayList中，如果传入集合包含两个1，该集合中只包含一个1，也返回true
+     *
      * Returns <tt>true</tt> if this collection contains all of the elements
      * in the specified collection.
      *
@@ -334,6 +380,9 @@ public interface Collection<E> extends Iterable<E> {
     boolean containsAll(Collection<?> c);
 
     /**
+     * 将指定集合中的所有元素添加到此集合
+     * 如果在该方法执行期间传入集合发生了更改，那么该方法的结果是未知的
+     *
      * Adds all of the elements in the specified collection to this collection
      * (optional operation).  The behavior of this operation is undefined if
      * the specified collection is modified while the operation is in progress.
@@ -360,6 +409,9 @@ public interface Collection<E> extends Iterable<E> {
     boolean addAll(Collection<? extends E> c);
 
     /**
+     * 删除此集合中包含的所有传入集合的元素。
+     * 当该方法调用并返回后，传入集合将不包含与该集合相同的元素。
+     *
      * Removes all of this collection's elements that are also contained in the
      * specified collection (optional operation).  After this call returns,
      * this collection will contain no elements in common with the specified
@@ -385,6 +437,13 @@ public interface Collection<E> extends Iterable<E> {
     boolean removeAll(Collection<?> c);
 
     /**
+     * 移除符合要求的元素
+     * 入参是lambda表达式形式，表现为一个操作
+     * 内部用迭代器实现，使用迭代器的remove方法进行删除
+     *
+     * 比如筛选字符串集合中指定字符串：list.removeIf(l -> l.equals("s"));
+     * 上述示例操作会将list集合中所有"s"字符串删除。
+     *
      * Removes all of the elements of this collection that satisfy the given
      * predicate.  Errors or runtime exceptions thrown during iteration or by
      * the predicate are relayed to the caller.
@@ -420,6 +479,9 @@ public interface Collection<E> extends Iterable<E> {
     }
 
     /**
+     * 仅保留与传入集合相同的元素。
+     * 也就是说，删除该集合中与传入集合不相同的所有元素。
+     *
      * Retains only the elements in this collection that are contained in the
      * specified collection (optional operation).  In other words, removes from
      * this collection all of its elements that are not contained in the
@@ -444,6 +506,9 @@ public interface Collection<E> extends Iterable<E> {
     boolean retainAll(Collection<?> c);
 
     /**
+     * 删除该集合所有元素。
+     * 此方法执行完毕后，集合将为空。
+     *
      * Removes all of the elements from this collection (optional operation).
      * The collection will be empty after this method returns.
      *
@@ -456,6 +521,8 @@ public interface Collection<E> extends Iterable<E> {
     // Comparison and hashing
 
     /**
+     * 依靠Object中的equals方法来实现对象的比较，详情请见Object中的equals方法。
+     *
      * Compares the specified object with this collection for equality. <p>
      *
      * While the <tt>Collection</tt> interface adds no stipulations to the
@@ -491,6 +558,9 @@ public interface Collection<E> extends Iterable<E> {
     boolean equals(Object o);
 
     /**
+     * 返回该集合的哈希码。
+     * （详情请见Object中的hashcode方法）
+     *
      * Returns the hash code value for this collection.  While the
      * <tt>Collection</tt> interface adds no stipulations to the general
      * contract for the <tt>Object.hashCode</tt> method, programmers should
@@ -508,6 +578,8 @@ public interface Collection<E> extends Iterable<E> {
     int hashCode();
 
     /**
+     * 可分割迭代器。
+     *
      * Creates a {@link Spliterator} over the elements in this collection.
      *
      * Implementations should document characteristic values reported by the
@@ -563,6 +635,8 @@ public interface Collection<E> extends Iterable<E> {
     }
 
     /**
+     * 返回一个该集合的串行流。
+     *
      * Returns a sequential {@code Stream} with this collection as its source.
      *
      * <p>This method should be overridden when the {@link #spliterator()}
@@ -582,6 +656,8 @@ public interface Collection<E> extends Iterable<E> {
     }
 
     /**
+     * 返回一个该集合的并行流。
+     *
      * Returns a possibly parallel {@code Stream} with this collection as its
      * source.  It is allowable for this method to return a sequential stream.
      *

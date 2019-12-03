@@ -63,6 +63,15 @@ public class Object {
     public final native Class<?> getClass();
 
     /**
+     * 返回对象的哈希码值。
+     * 支持这种方法是为了散列表，如HashMap提供的那样。
+     *
+     * 该方法一些常规规定是：
+     * 在应用程序执行期间，如果一个对象用于equals()方法的属性没有被修改的话，要保证对该对象多次返回的hashcode值相等。
+     * 如果两个对象通过equals()方法判断的结果为true，那么要保证两者的hashcode值相等。
+     * 如果两个对象通过equals()方法判断的结果为false，那么对hashcode值没有要求。
+     * 但是有一点，为不相等的对象生成不同的hashcode结果可能会提高散列表的性能。
+     *
      * Returns a hash code value for the object. This method is
      * supported for the benefit of hash tables such as those provided by
      * {@link java.util.HashMap}.
@@ -100,6 +109,13 @@ public class Object {
     public native int hashCode();
 
     /**
+     * 判断一些对象是否相等（可以看到，其最根本的实现就是“==”）
+     * 自反性：对于任何非空的引用x，执行x.equals(x)时应该返回true
+     * 对称性：对于任何非空的引用x和y，当且仅当y.equals(x)返回true时，x.equals(y)也应该返回true
+     * 传递性：对于任何非空的引用x，y和z，如果x.equals(y)返回true且y.equals(z)返回true，那么x.equals(z)也应该返回true
+     * 一致性：对于任何非空的引用x和y，如果没有修改用于比较的信息，那么x.equals(y)应该始终返回true或false
+     * 对于任何非空的引用x，x.equals(null)总是返回false
+     *
      * Indicates whether some other object is "equal to" this one.
      * <p>
      * The {@code equals} method implements an equivalence relation
