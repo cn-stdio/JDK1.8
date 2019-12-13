@@ -573,6 +573,13 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
     }
 
     /**
+     * 该参数反应了当前的集合在结构上被修改的次数。
+     * 结构上的修改表现为改变该集合的大小，或者以一种在迭代进行中产生错误结果的方式使该集合结构混乱
+     *
+     * 该字段主要使用在迭代器之中（Iterator和ListIterator）
+     * 如果该字段的值发生了错误的更改（一般是指在并发过程中发生的混乱），将在迭代器操作的时候抛出一个异常（ConcurrentModificationException）
+     * 这提供了fail-fast（快速失败）机制
+     *
      * The number of times this list has been <i>structurally modified</i>.
      * Structural modifications are those that change the size of the
      * list, or otherwise perturb it in such a fashion that iterations in

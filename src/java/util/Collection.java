@@ -283,7 +283,7 @@ public interface Collection<E> extends Iterable<E> {
     // Modification Operations
 
     /**
-     * 确保此集合包含指定的元素（可选操作）
+     * 向此集合中添加元素
      * 如果此集合因为调用了该方法而发生了改变的话，返回true
      * （如果此集合不允许重复且已包含指定元素，返回false）
      *

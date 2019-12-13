@@ -111,6 +111,8 @@ import java.util.function.UnaryOperator;
 public interface List<E> extends Collection<E> {
     // Query Operations
 
+    /* 一些相关方法注释参考Collection接口 */
+
     /**
      * Returns the number of elements in this list.  If this list contains
      * more than <tt>Integer.MAX_VALUE</tt> elements, returns
@@ -145,6 +147,8 @@ public interface List<E> extends Collection<E> {
     boolean contains(Object o);
 
     /**
+     * 不同于Collection的一点是，List的迭代器返回的元素顺序有序
+     *
      * Returns an iterator over the elements in this list in proper sequence.
      *
      * @return an iterator over the elements in this list in proper sequence
@@ -307,6 +311,9 @@ public interface List<E> extends Collection<E> {
     boolean addAll(Collection<? extends E> c);
 
     /**
+     * 允许将传入集合的元素在本集合的index位置处插入
+     * 原本在该位置及其之后的元素后移
+     *
      * Inserts all of the elements in the specified collection into this
      * list at the specified position (optional operation).  Shifts the
      * element currently at that position (if any) and any subsequent
@@ -378,6 +385,15 @@ public interface List<E> extends Collection<E> {
     boolean retainAll(Collection<?> c);
 
     /**
+     * 将该集合的所有元素替换为操作后的结果
+     * 入参是一个Lambda表达式，表现为一个操作
+     * 可以看到，内部采用List自己的迭代器进行实现，对每一个元素进行迭代并进行相应操作
+     *
+     * 例如：
+     * 原集合中元素为{1, 2, 3}
+     * 对该集合执行对应操作：list.replaceAll(l -> l = (int)l + 1);
+     * 替换后集合元素为：{2, 3, 4}
+     *
      * Replaces each element of this list with the result of applying the
      * operator to that element.  Errors or runtime exceptions thrown by
      * the operator are relayed to the caller.
@@ -415,6 +431,21 @@ public interface List<E> extends Collection<E> {
     }
 
     /**
+     * 按照入参中的Comparator进行排序
+     *
+     * 如果传入的Comparator为空，那么所有在这个集合中的元素都必须实现Comparable接口，并且使用Comparable默认顺序（升序）
+     * 对于Comparator中的compare(c1, c2)方法来说，默认返回正整数代表c1大于c2，0代表等于，负整数代表小于
+     * 而又因为compare默认实现为升序，所以用正确的比较结果为升序，相反的比较结果为倒序
+     * 假定传入的为Integer类型，那么 c1-c2 返回结果与compare返回相符，所以最后集合排序为升序
+     * 而如果控制条件为 c2-c1，那么当c1大于c2时，返回的是负整数，与compare返回结果相反，所以最后集合排序为倒序
+     *
+     * 可以看到，其基本的实现思路为：
+     * 将集合中的元素保存在一个数组中（toArray）
+     * 调用Arrays的sort方法对数组进行排序
+     * 利用List自身的迭代器为该集合的每个位置设置对应的值
+     *
+     * 这种实现的好处是可以避免直接对链表进行排序所造成的性能上的浪费。
+     *
      * Sorts this list according to the order induced by the specified
      * {@link Comparator}.
      *
@@ -534,6 +565,7 @@ public interface List<E> extends Collection<E> {
     // Positional Access Operations
 
     /**
+     * 根据下标获取对应的值
      * Returns the element at the specified position in this list.
      *
      * @param index index of the element to return
@@ -544,6 +576,8 @@ public interface List<E> extends Collection<E> {
     E get(int index);
 
     /**
+     * 将下标所在处的元素替换为指定元素，返回这个下标处的元素（未被替换前的）
+     *
      * Replaces the element at the specified position in this list with the
      * specified element (optional operation).
      *
@@ -564,6 +598,8 @@ public interface List<E> extends Collection<E> {
     E set(int index, E element);
 
     /**
+     * 在指定索引处插入元素，在其后面的元素依次后移
+     *
      * Inserts the specified element at the specified position in this list
      * (optional operation).  Shifts the element currently at that position
      * (if any) and any subsequent elements to the right (adds one to their
@@ -585,6 +621,8 @@ public interface List<E> extends Collection<E> {
     void add(int index, E element);
 
     /**
+     * 移除指定索引处的元素，后面的元素依次左移补位
+     *
      * Removes the element at the specified position in this list (optional
      * operation).  Shifts any subsequent elements to the left (subtracts one
      * from their indices).  Returns the element that was removed from the
@@ -603,6 +641,9 @@ public interface List<E> extends Collection<E> {
     // Search Operations
 
     /**
+     * 返回入参在该集合中第一次出现的位置
+     * 假如该集合中不存在该元素，则返回-1
+     *
      * Returns the index of the first occurrence of the specified element
      * in this list, or -1 if this list does not contain the element.
      * More formally, returns the lowest index <tt>i</tt> such that
@@ -622,6 +663,9 @@ public interface List<E> extends Collection<E> {
     int indexOf(Object o);
 
     /**
+     * 返回入参在该集合中最后一次出现的位置
+     * 同样的，如果该集合中不存在该元素，返回-1
+     *
      * Returns the index of the last occurrence of the specified element
      * in this list, or -1 if this list does not contain the element.
      * More formally, returns the highest index <tt>i</tt> such that
@@ -644,6 +688,8 @@ public interface List<E> extends Collection<E> {
     // List Iterators
 
     /**
+     * 返回一个专属于List集合的迭代器，该迭代器是双向的
+     *
      * Returns a list iterator over the elements in this list (in proper
      * sequence).
      *
@@ -653,6 +699,9 @@ public interface List<E> extends Collection<E> {
     ListIterator<E> listIterator();
 
     /**
+     * 建立一个在该集合中指定位置开始的迭代器
+     * 调用next将返回索引处的元素，而调用previous()将返回索引处的上一个元素
+     *
      * Returns a list iterator over the elements in this list (in proper
      * sequence), starting at the specified position in the list.
      * The specified index indicates the first element that would be
@@ -672,6 +721,15 @@ public interface List<E> extends Collection<E> {
     // View
 
     /**
+     * 返回包含该集合中指定范围内元素的集合（左闭右开）
+     * 如果formIndex =  toIndex，则返回一个空的List
+     *
+     * 需要注意的一点是：
+     * 对返回集合的所有操作，都会同步到该集合上，可以将返回集合理解为对原集合部分元素的一个视图
+     * 比如：对返回集合的所有数+1，那么该集合中相应地方的数也会+1,
+     * 而反过来却不行，当对该集合修改后，访问返回集合将会报错（ConcurrentModificationException）
+     * （任何地方的修改都不行，比如返回集合包含的索引号为2~4，在该集合的第8个位置添加元素，访问返回集合同样会报错）
+     *
      * Returns a view of the portion of this list between the specified
      * <tt>fromIndex</tt>, inclusive, and <tt>toIndex</tt>, exclusive.  (If
      * <tt>fromIndex</tt> and <tt>toIndex</tt> are equal, the returned list is

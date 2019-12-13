@@ -108,6 +108,8 @@ import java.util.Comparators;
 @FunctionalInterface
 public interface Comparator<T> {
     /**
+     * 比较两个参数的顺序，第一个参数和第二个参数进行比较，返回负整数代表小于，0代表等于，正整数代表大于
+     *
      * Compares its two arguments for order.  Returns a negative integer,
      * zero, or a positive integer as the first argument is less than, equal
      * to, or greater than the second.<p>

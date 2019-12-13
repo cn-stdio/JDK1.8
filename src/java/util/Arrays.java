@@ -3778,6 +3778,13 @@ public class Arrays {
     // Misc
 
     /**
+     * 返回一个固定大小的集合
+     * 该集合是由内部自己实现的ArrayList而非java.util包中的ArrayList
+     * 所以我们只能对其进行查看或者修改，不能进行添加或者删除
+     *
+     * 需要注意的一点是，该方法接收一个可变参数，这个可变参数的类型是作为泛型的参数
+     * 而基本类型是无法作为泛型参数的，所以当传入一个基本类型数组时，会将整个数组当作一个元素传入，其size为1
+     *
      * Returns a fixed-size list backed by the specified array.  (Changes to
      * the returned list "write through" to the array.)  This method acts
      * as bridge between array-based and collection-based APIs, in
