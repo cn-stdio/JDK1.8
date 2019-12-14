@@ -84,9 +84,14 @@ public class LinkedList<E>
     extends AbstractSequentialList<E>
     implements List<E>, Deque<E>, Cloneable, java.io.Serializable
 {
+    /**
+     * 链表长度
+     */
     transient int size = 0;
 
     /**
+     * 头结点指针
+     *
      * Pointer to first node.
      * Invariant: (first == null && last == null) ||
      *            (first.prev == null && first.item != null)
@@ -94,6 +99,8 @@ public class LinkedList<E>
     transient Node<E> first;
 
     /**
+     * 尾结点指针
+     *
      * Pointer to last node.
      * Invariant: (first == null && last == null) ||
      *            (last.next == null && last.item != null)
@@ -101,12 +108,16 @@ public class LinkedList<E>
     transient Node<E> last;
 
     /**
+     * 默认的空构造方法
+     *
      * Constructs an empty list.
      */
     public LinkedList() {
     }
 
     /**
+     * 可以用集合c来构造该链表，利用addAll方法将传参集合中的所有元素加入该链表中。
+     *
      * Constructs a list containing the elements of the specified
      * collection, in the order they are returned by the collection's
      * iterator.
@@ -120,12 +131,15 @@ public class LinkedList<E>
     }
 
     /**
+     * 在链表的头部插入元素e
+     *
      * Links e as first element.
      */
     private void linkFirst(E e) {
         final Node<E> f = first;
         final Node<E> newNode = new Node<>(null, e, f);
         first = newNode;
+        /* 如果这是一个空链表，则将尾指针也指向这个新增节点 */
         if (f == null)
             last = newNode;
         else
@@ -135,6 +149,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 在链表的尾部插入元素e
+     *
      * Links e as last element.
      */
     void linkLast(E e) {
@@ -150,6 +166,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 在某节点的前面插入元素e
+     *
      * Inserts element e before non-null Node succ.
      */
     void linkBefore(E e, Node<E> succ) {
@@ -166,6 +184,9 @@ public class LinkedList<E>
     }
 
     /**
+     * 删除节点f并返回其值
+     * （这里默认节点f为头节点且不等于null）
+     *
      * Unlinks non-null first node f.
      */
     private E unlinkFirst(Node<E> f) {
@@ -185,6 +206,9 @@ public class LinkedList<E>
     }
 
     /**
+     * 删除节点l并返回其值
+     * （这里默认节点l是尾节点且不为空）
+     *
      * Unlinks non-null last node l.
      */
     private E unlinkLast(Node<E> l) {
@@ -204,6 +228,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 删除节点x并返回其值（默认x不为空）
+     *
      * Unlinks non-null node x.
      */
     E unlink(Node<E> x) {
@@ -233,6 +259,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 返回该链表的头节点信息
+     *
      * Returns the first element in this list.
      *
      * @return the first element in this list
@@ -246,6 +274,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 返回该链表的尾节点信息
+     *
      * Returns the last element in this list.
      *
      * @return the last element in this list
@@ -259,6 +289,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 移除该链表头节点并返回其持有的数据信息
+     *
      * Removes and returns the first element from this list.
      *
      * @return the first element from this list
@@ -272,6 +304,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 移除该链表尾节点并返回其持有的数据信息
+     *
      * Removes and returns the last element from this list.
      *
      * @return the last element from this list
@@ -285,6 +319,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 在头节点前添加一个节点使其成为新的头节点
+     *
      * Inserts the specified element at the beginning of this list.
      *
      * @param e the element to add
@@ -294,6 +330,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 在尾节点后添加一个元素使其成为新的尾节点
+     *
      * Appends the specified element to the end of this list.
      *
      * <p>This method is equivalent to {@link #add}.
@@ -305,6 +343,9 @@ public class LinkedList<E>
     }
 
     /**
+     * 是否包含指定元素
+     * 利用另一方法indexOf来返回该元素的索引，未找到则索引为-1
+     *
      * Returns {@code true} if this list contains the specified element.
      * More formally, returns {@code true} if and only if this list contains
      * at least one element {@code e} such that
@@ -318,6 +359,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 返回集合大小
+     *
      * Returns the number of elements in this list.
      *
      * @return the number of elements in this list
@@ -327,6 +370,9 @@ public class LinkedList<E>
     }
 
     /**
+     * 在该链表中添加一个元素
+     * 内部直接复用了linkLast方法，在尾节点处添加元素
+     *
      * Appends the specified element to the end of this list.
      *
      * <p>This method is equivalent to {@link #addLast}.
@@ -340,6 +386,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 移除第一个节点元素等于o的节点
+     *
      * Removes the first occurrence of the specified element from this list,
      * if it is present.  If this list does not contain the element, it is
      * unchanged.  More formally, removes the element with the lowest index
@@ -372,6 +420,9 @@ public class LinkedList<E>
     }
 
     /**
+     * 将集合C中的所有元素添加到链表尾部
+     * 复用了重载后的addAll方法，索引设置为size，即在尾节点添加元素
+     *
      * Appends all of the elements in the specified collection to the end of
      * this list, in the order that they are returned by the specified
      * collection's iterator.  The behavior of this operation is undefined if
@@ -388,6 +439,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 将集合C中所有元素插入到目标索引位置
+     *
      * Inserts all of the elements in the specified collection into this
      * list, starting at the specified position.  Shifts the element
      * currently at that position (if any) and any subsequent elements to
@@ -442,6 +495,9 @@ public class LinkedList<E>
     }
 
     /**
+     * 清空链表
+     * 用一个循环将所有节点内部数据置空
+     *
      * Removes all of the elements from this list.
      * The list will be empty after this call returns.
      */
@@ -466,6 +522,11 @@ public class LinkedList<E>
     // Positional Access Operations
 
     /**
+     * 返回某索引处的元素信息
+     * 直接调用了node方法来获得元素信息
+     * 其内部首先判断索引是在集合的左半边还是右半边（假设把集合从中间分开）
+     * 在左半边就从first开始遍历，在右半边就从last开始遍历（就近遍历以优化效率）
+     *
      * Returns the element at the specified position in this list.
      *
      * @param index index of the element to return
@@ -478,6 +539,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 替换某节点的元素信息并返回原来的元素
+     *
      * Replaces the element at the specified position in this list with the
      * specified element.
      *
@@ -495,6 +558,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 在某索引处添加元素
+     *
      * Inserts the specified element at the specified position in this list.
      * Shifts the element currently at that position (if any) and any
      * subsequent elements to the right (adds one to their indices).
@@ -513,6 +578,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 移除某索引处的节点
+     *
      * Removes the element at the specified position in this list.  Shifts any
      * subsequent elements to the left (subtracts one from their indices).
      * Returns the element that was removed from the list.
@@ -527,6 +594,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 作为检索节点的判断保证节点信息存在
+     *
      * Tells if the argument is the index of an existing element.
      */
     private boolean isElementIndex(int index) {
@@ -534,6 +603,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 作为添加元素的判断，与上述判断不同的是，允许index==size，以使得可以在尾节点后添加元素
+     *
      * Tells if the argument is the index of a valid position for an
      * iterator or an add operation.
      */
@@ -561,6 +632,9 @@ public class LinkedList<E>
     }
 
     /**
+     * 查找指定索引节点，利用了双向链表有头、尾指针的性质
+     * 首先判断索引在左半边还是右半边，左半边就从头开始找，右半边就从尾向前找
+     *
      * Returns the (non-null) Node at the specified element index.
      */
     Node<E> node(int index) {
@@ -582,6 +656,10 @@ public class LinkedList<E>
     // Search Operations
 
     /**
+     * 返回指定元素的索引（不是节点而是节点的内容）
+     * 内部如果为null用"=="判断，不为空则用equals方法判断相等
+     * 未找到指定元素则返回-1
+     *
      * Returns the index of the first occurrence of the specified element
      * in this list, or -1 if this list does not contain the element.
      * More formally, returns the lowest index {@code i} such that
@@ -611,6 +689,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 返回该元素在链表中最后一次出现的位置
+     *
      * Returns the index of the last occurrence of the specified element
      * in this list, or -1 if this list does not contain the element.
      * More formally, returns the highest index {@code i} such that
@@ -642,6 +722,10 @@ public class LinkedList<E>
     // Queue operations.
 
     /**
+     * 查看链表首节点的元素信息但并不移除他
+     * 与getFirst()不同的是，如果头节点为null，则getFirst()会抛出一个NoSuchElementException异常
+     * 但是在该方法中，会返回null值而不会抛出异常
+     *
      * Retrieves, but does not remove, the head (first element) of this list.
      *
      * @return the head of this list, or {@code null} if this list is empty
@@ -653,6 +737,13 @@ public class LinkedList<E>
     }
 
     /**
+     * 获得头节点元素信息
+     * 该方法从Queue继承而来，是对该接口中element()方法的实现
+     *
+     * 而其为什么不直接对该方法进行实现而是另外实现了一个getFirst方法
+     * 我的理解是“命名规范”，很明显getFirst的名称更容易理解与接受
+     * （以下重复调用大部分都是对Queue中方法的实现，不再赘述）
+     *
      * Retrieves, but does not remove, the head (first element) of this list.
      *
      * @return the head of this list
@@ -664,6 +755,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 头节点为null时返回null，否则移除头节点元素
+     *
      * Retrieves and removes the head (first element) of this list.
      *
      * @return the head of this list, or {@code null} if this list is empty
@@ -675,6 +768,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 移除头节点（头节点为null会抛出异常）
+     *
      * Retrieves and removes the head (first element) of this list.
      *
      * @return the head of this list
@@ -686,6 +781,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 添加某节点元素
+     *
      * Adds the specified element as the tail (last element) of this list.
      *
      * @param e the element to add
@@ -698,6 +795,8 @@ public class LinkedList<E>
 
     // Deque operations
     /**
+     * 在头节点处添加元素
+     *
      * Inserts the specified element at the front of this list.
      *
      * @param e the element to insert
@@ -710,6 +809,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 在尾节点处添加元素
+     *
      * Inserts the specified element at the end of this list.
      *
      * @param e the element to insert
@@ -722,6 +823,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 与peek()相同
+     *
      * Retrieves, but does not remove, the first element of this list,
      * or returns {@code null} if this list is empty.
      *
@@ -843,6 +946,10 @@ public class LinkedList<E>
     }
 
     /**
+     * 返回一个在索引index处的List内部实现的迭代器，该迭代器支持双向迭代
+     * 执行双向迭代时，next是当前索引处的元素，而previous是索引处的上一个元素
+     * 可以看到，返回的是LinkedList内部实现的迭代器类 ListItr
+     *
      * Returns a list-iterator of the elements in this list (in proper
      * sequence), starting at the specified position in the list.
      * Obeys the general contract of {@code List.listIterator(int)}.<p>
@@ -869,9 +976,21 @@ public class LinkedList<E>
     }
 
     private class ListItr implements ListIterator<E> {
+        /**
+         * 上一个元素节点
+         */
         private Node<E> lastReturned;
+        /**
+         * 当前元素节点
+         */
         private Node<E> next;
+        /**
+         * 当前节点索引
+         */
         private int nextIndex;
+        /**
+         * 期望结构变化次数
+         */
         private int expectedModCount = modCount;
 
         ListItr(int index) {
@@ -884,6 +1003,12 @@ public class LinkedList<E>
             return nextIndex < size;
         }
 
+        /**
+         * 返回当前迭代器指向的节点信息
+         * 因为首先调用了hasNext()方法进行越界检查，所以当当前迭代器指向了null时，会抛出异常
+         *
+         * @return 当前迭代器指向的节点信息
+         */
         public E next() {
             checkForComodification();
             if (!hasNext())
@@ -899,6 +1024,13 @@ public class LinkedList<E>
             return nextIndex > 0;
         }
 
+        /**
+         * 返回迭代器上一个迭代过的元素，并将next前置
+         * 此时，next和lastReturned指向同一个元素
+         * 因为返回的一直是next.prev，所以当连续调用时，即使lastReturned没有指向上一个元素也不会出错
+         *
+         * @return 上一节点元素信息
+         */
         public E previous() {
             checkForComodification();
             if (!hasPrevious())
@@ -917,6 +1049,15 @@ public class LinkedList<E>
             return nextIndex - 1;
         }
 
+        /**
+         * 移除上一个迭代的元素
+         * unlink()方法会使得modCount++，这里让expectedModCount同时++以确保不会出现错误
+         *
+         * 当调用完previous()时，lastReturned没有变化，所以不会出错
+         * 此时next==lastReturned，考虑到这一点，所以单列出条件判断
+         *
+         * 调用完后会重新初始化lastReturned，所以不能连续调用
+         */
         public void remove() {
             checkForComodification();
             if (lastReturned == null)
@@ -1012,6 +1153,8 @@ public class LinkedList<E>
     }
 
     /**
+     * 同样是浅拷贝，对集合进行拷贝并返回
+     *
      * Returns a shallow copy of this {@code LinkedList}. (The elements
      * themselves are not cloned.)
      *
@@ -1033,6 +1176,10 @@ public class LinkedList<E>
     }
 
     /**
+     * 返回一个包含该链表所有元素的数组
+     * 区别于ArrayList的是，因为其内部是链表结构并没有维护一个数组
+     * 所以新建一个数组并赋值后返回
+     *
      * Returns an array containing all of the elements in this list
      * in proper sequence (from first to last element).
      *
