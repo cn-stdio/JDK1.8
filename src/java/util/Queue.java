@@ -143,6 +143,8 @@ package java.util;
  */
 public interface Queue<E> extends Collection<E> {
     /**
+     * 向队列尾部插入一个值，如果没有空间则抛出异常
+     *
      * Inserts the specified element into this queue if it is possible to do so
      * immediately without violating capacity restrictions, returning
      * {@code true} upon success and throwing an {@code IllegalStateException}
@@ -162,6 +164,9 @@ public interface Queue<E> extends Collection<E> {
     boolean add(E e);
 
     /**
+     * 向队列尾部插入一个值，如果没有空间返回false
+     * 在容量有限的队列中添加元素推荐使用该方法而不是add()
+     *
      * Inserts the specified element into this queue if it is possible to do
      * so immediately without violating capacity restrictions.
      * When using a capacity-restricted queue, this method is generally
@@ -181,6 +186,9 @@ public interface Queue<E> extends Collection<E> {
     boolean offer(E e);
 
     /**
+     * 将队列头部的元素从队列中删除并返回该元素信息
+     * 假如队列为空，则抛出异常
+     *
      * Retrieves and removes the head of this queue.  This method differs
      * from {@link #poll poll} only in that it throws an exception if this
      * queue is empty.
@@ -191,6 +199,9 @@ public interface Queue<E> extends Collection<E> {
     E remove();
 
     /**
+     * 同样是将队列头部的元素从队列中删除并返回
+     * 不同的是当队列为空时调用该方法将返回null
+     *
      * Retrieves and removes the head of this queue,
      * or returns {@code null} if this queue is empty.
      *
@@ -199,6 +210,9 @@ public interface Queue<E> extends Collection<E> {
     E poll();
 
     /**
+     * 返回队列头部元素值但不会删除该元素
+     * 如果队列为空则抛出异常
+     *
      * Retrieves, but does not remove, the head of this queue.  This method
      * differs from {@link #peek peek} only in that it throws an exception
      * if this queue is empty.
@@ -209,6 +223,9 @@ public interface Queue<E> extends Collection<E> {
     E element();
 
     /**
+     * 返回队列头部元素但不删除
+     * 如果队列为空则返回null
+     *
      * Retrieves, but does not remove, the head of this queue,
      * or returns {@code null} if this queue is empty.
      *

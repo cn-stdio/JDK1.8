@@ -39,6 +39,9 @@ import java.util.Collection;
 import java.util.Queue;
 
 /**
+ * 一个Queue的子接口，支持在队列阻塞时进行等待
+ * 该类是线程安全的，所有队列操作都自动地使用内部锁或其他同步控制
+ *
  * A {@link java.util.Queue} that additionally supports operations
  * that wait for the queue to become non-empty when retrieving an
  * element, and wait for space to become available in the queue when
@@ -232,6 +235,9 @@ public interface BlockingQueue<E> extends Queue<E> {
     void put(E e) throws InterruptedException;
 
     /**
+     * 插入一个元素在队列尾部
+     * 如果队列已满，则需要等待指定的时间
+     *
      * Inserts the specified element into this queue, waiting up to the
      * specified wait time if necessary for space to become available.
      *
@@ -262,6 +268,8 @@ public interface BlockingQueue<E> extends Queue<E> {
     E take() throws InterruptedException;
 
     /**
+     * 删除该队列头部的元素，如果队列为空，则需要等待指定的时间。
+     *
      * Retrieves and removes the head of this queue, waiting up to the
      * specified wait time if necessary for an element to become available.
      *
@@ -277,6 +285,8 @@ public interface BlockingQueue<E> extends Queue<E> {
         throws InterruptedException;
 
     /**
+     * 返回当前的队列中还能插入的元素数量
+     *
      * Returns the number of additional elements that this queue can ideally
      * (in the absence of memory or resource constraints) accept without
      * blocking, or {@code Integer.MAX_VALUE} if there is no intrinsic
@@ -325,6 +335,8 @@ public interface BlockingQueue<E> extends Queue<E> {
     public boolean contains(Object o);
 
     /**
+     * 将队列中的所有元素移除并添加到入参集合中
+     *
      * Removes all available elements from this queue and adds them
      * to the given collection.  This operation may be more
      * efficient than repeatedly polling this queue.  A failure
@@ -350,6 +362,8 @@ public interface BlockingQueue<E> extends Queue<E> {
     int drainTo(Collection<? super E> c);
 
     /**
+     * 重载的drainTo方法加入了一个参数maxElements来指明移除并拷贝元素的个数
+     *
      * Removes at most the given number of available elements from
      * this queue and adds them to the given collection.  A failure
      * encountered while attempting to add elements to

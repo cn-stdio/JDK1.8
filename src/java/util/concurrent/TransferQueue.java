@@ -36,6 +36,9 @@
 package java.util.concurrent;
 
 /**
+ * 阻塞队列的高级版本，BlockingQueue的子接口
+ * 生产者在调用Transfer方法向队列添加元素时，会一直阻塞到该元素被消费者使用为止
+ *
  * A {@link BlockingQueue} in which producers may wait for consumers
  * to receive elements.  A {@code TransferQueue} may be useful for
  * example in message passing applications in which producers
@@ -67,6 +70,10 @@ package java.util.concurrent;
  */
 public interface TransferQueue<E> extends BlockingQueue<E> {
     /**
+     * 尝试立即将元素e转交给消费者
+     * 如果当前存在正在等待的消费者，则返回true，否则返回false，元素不会被添加到队列中
+     * （消费者要从队列中获取元素，队列为空阻塞中，调用该方法使消费者直接拿到元素e）
+     *
      * Transfers the element to a waiting consumer immediately, if possible.
      *
      * <p>More precisely, transfers the specified element immediately
@@ -86,6 +93,8 @@ public interface TransferQueue<E> extends BlockingQueue<E> {
     boolean tryTransfer(E e);
 
     /**
+     * 将元素e加入到队列中并无限等待，直到元素被消费者接收
+     *
      * Transfers the element to a consumer, waiting if necessary to do so.
      *
      * <p>More precisely, transfers the specified element immediately
@@ -105,6 +114,8 @@ public interface TransferQueue<E> extends BlockingQueue<E> {
     void transfer(E e) throws InterruptedException;
 
     /**
+     * 将元素e加入到队列中并等待一段时间，如果在对应时间内元素未被消费者接收，则返回false，元素留在队列中
+     *
      * Transfers the element to a consumer if it is possible to do so
      * before the timeout elapses.
      *
@@ -135,6 +146,8 @@ public interface TransferQueue<E> extends BlockingQueue<E> {
         throws InterruptedException;
 
     /**
+     * 检查是否有消费者在等待
+     *
      * Returns {@code true} if there is at least one consumer waiting
      * to receive an element via {@link #take} or
      * timed {@link #poll(long,TimeUnit) poll}.
@@ -145,6 +158,9 @@ public interface TransferQueue<E> extends BlockingQueue<E> {
     boolean hasWaitingConsumer();
 
     /**
+     * 获得等待的消费者数量
+     * （这个数量可能并不准确，只是一个估计值，不能用于同步控制）
+     *
      * Returns an estimate of the number of consumers waiting to
      * receive elements via {@link #take} or timed
      * {@link #poll(long,TimeUnit) poll}.  The return value is an
