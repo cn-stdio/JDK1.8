@@ -27,6 +27,8 @@ package java.util;
 import java.util.Map.Entry;
 
 /**
+ * Map接口的框架性实现，允许存入null值
+ *
  * This class provides a skeletal implementation of the <tt>Map</tt>
  * interface, to minimize the effort required to implement this interface.
  *
@@ -96,6 +98,10 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
     }
 
     /**
+     * 检查该Map中是否存在指定value值
+     *
+     * 利用entrySet()方法返回Set视图，用Set内部的迭代器对所有的Entry进行迭代，利用equals进行判断
+     *
      * {@inheritDoc}
      *
      * @implSpec
@@ -127,6 +133,8 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
     }
 
     /**
+     * 同样用迭代器对视图进行迭代判断
+     *
      * {@inheritDoc}
      *
      * @implSpec
@@ -159,6 +167,12 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
     }
 
     /**
+     * 获得key对应的value
+     * 同样是对视图进行迭代，用getValue()返回其对应的value
+     *
+     * 如果传入的key为null，则找到null对应的映射（允许key值为null）
+     * 如果不存在value值或不存在指定key则返回null
+     *
      * {@inheritDoc}
      *
      * @implSpec
@@ -210,6 +224,10 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
     }
 
     /**
+     * 同样是利用了视图的迭代器，允许key为null的情况
+     * 找到了就用迭代器的remove方法移除该键值对（因为找到就退出循环，保证迭代器上一次遍历的值就是该键值对），并返回该键值对的value值
+     * 未找到对应的key则返回null
+     *
      * {@inheritDoc}
      *
      * @implSpec
@@ -260,6 +278,8 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
     // Bulk Operations
 
     /**
+     * 批量插入，本质上就是一个for循环，对视图中的每个键值对进行插入
+     *
      * {@inheritDoc}
      *
      * @implSpec
@@ -282,6 +302,8 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
     }
 
     /**
+     * 清空操作
+     *
      * {@inheritDoc}
      *
      * @implSpec
@@ -301,6 +323,9 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
     // Views
 
     /**
+     * 这些属性的初始化采用了延迟加载的方式。
+     * 只有当第一次调用keySet和values方法时（第一次使用/请求），才会进行加载转化为视图。
+     *
      * Each of these fields are initialized to contain an instance of the
      * appropriate view the first time this view is requested.  The views are
      * stateless, so there's no reason to create more than one of each.
@@ -328,6 +353,10 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
     transient Collection<V> values;
 
     /**
+     * 用AbstractSet构造该视图
+     * 可以看到，内部封装的迭代器是基于entrySet的迭代器的，只不过next方法是获取的key值而已
+     * 而他的其他方法其实都是调用的本类的相应方法，这就是为什么对二者的操作会映射到二者身上的缘故
+     *
      * {@inheritDoc}
      *
      * @implSpec
@@ -387,6 +416,8 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
     }
 
     /**
+     * 与keySet方法大致相同
+     *
      * {@inheritDoc}
      *
      * @implSpec
@@ -451,6 +482,14 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
     // Comparison and hashing
 
     /**
+     * 判断两个Map是否相等
+     * 出现以下两种情况中的任一种视为两个Map相等：
+     * 1. 两个Map引用指向同一个内存对象
+     * 2. 保证二者实现了Map接口，且大小一致的基础上，对于二者每个相同的键对应的value值要保证其相等，这个相等是用equals来进行判断
+     * 当value为null时，对于另一个Map中相同键对应的映射，应保证其也为null
+     *
+     * 不满足上述情况，则返回false
+     *
      * Compares the specified object with this map for equality.  Returns
      * <tt>true</tt> if the given object is also a map and the two maps
      * represent the same mappings.  More formally, two maps <tt>m1</tt> and
@@ -484,14 +523,17 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
 
         try {
             Iterator<Entry<K,V>> i = entrySet().iterator();
+            /* 对本Map进行迭代操作 */
             while (i.hasNext()) {
                 Entry<K,V> e = i.next();
                 K key = e.getKey();
                 V value = e.getValue();
                 if (value == null) {
+                    /* 当遇到value等于null的情况，要保证入参Map中该key对应的value值也为null，且因为get()的二义性要保证该值存在 */
                     if (!(m.get(key)==null && m.containsKey(key)))
                         return false;
                 } else {
+                    /* 对于每一个键值对，当value值不为null时，保证两Map中value值相等，用equals来判断 */
                     if (!value.equals(m.get(key)))
                         return false;
                 }
@@ -532,6 +574,12 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
     }
 
     /**
+     * 打印该Map的信息
+     * 利用StringBuilder进行字符串拼接，打印信息如下：
+     * {key=value, key=value}
+     *
+     * 如果key或value的值是本Map的话，则在对应位置打印(this Map)
+     *
      * Returns a string representation of this map.  The string representation
      * consists of a list of key-value mappings in the order returned by the
      * map's <tt>entrySet</tt> view's iterator, enclosed in braces
@@ -564,6 +612,8 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
     }
 
     /**
+     * 返回一个该map的浅拷贝，调用的是Object的clone方法
+     *
      * Returns a shallow copy of this <tt>AbstractMap</tt> instance: the keys
      * and values themselves are not cloned.
      *
@@ -577,6 +627,9 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
     }
 
     /**
+     * 为SimpleEntry 和 SimpleImmutableEntry类准备的方法
+     * 用于判断入参是否相等
+     *
      * Utility method for SimpleEntry and SimpleImmutableEntry.
      * Test for equality, checking for nulls.
      *
@@ -595,6 +648,8 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
 
 
     /**
+     * 包含一个key和value的Entry
+     *
      * An Entry maintaining a key and a value.  The value may be
      * changed using the <tt>setValue</tt> method.  This class
      * facilitates the process of building custom map
@@ -727,6 +782,9 @@ public abstract class AbstractMap<K,V> implements Map<K,V> {
     }
 
     /**
+     * 与SimpleEntry唯一的区别是没有setValue方法，也就是说，其保存的键值对不可更改
+     * 也正是基于这点，此Entry是线程安全的
+     *
      * An Entry maintaining an immutable key and value.  This class
      * does not support method <tt>setValue</tt>.  This class may be
      * convenient in methods that return thread-safe snapshots of

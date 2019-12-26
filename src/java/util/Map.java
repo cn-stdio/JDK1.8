@@ -31,6 +31,15 @@ import java.util.function.Function;
 import java.io.Serializable;
 
 /**
+ * 存储key-value映射，允许重复key的存在
+ *
+ * 需要注意的几点是：
+ * 1. 如果键对应的对象是可变的（比如集合），并且这个改变会影响equals方法，那么map的行为将是不确定的。
+ * 2. map不允许将自己的引用当作键来保存。如果一个map允许这么做，那么它的equals和hashCode方法将不再总是有效。
+ *
+ * 所有的通用的map都必须实现两个构造方法：一个无参的，一个可以接收一个Map型参数的方法。
+ * 由于接口没有构造方法，所以上述要求无法强制执行，但所有map都应遵守该规定。
+ *
  * An object that maps keys to values.  A map cannot contain duplicate keys;
  * each key can map to at most one value.
  *
@@ -130,6 +139,9 @@ public interface Map<K,V> {
     // Query Operations
 
     /**
+     * 返回在该Map中键值对的数量
+     * 如果这个数量超过了Integer.MAX_VALUE，返回Integer.MAX_VALUE
+     *
      * Returns the number of key-value mappings in this map.  If the
      * map contains more than <tt>Integer.MAX_VALUE</tt> elements, returns
      * <tt>Integer.MAX_VALUE</tt>.
@@ -139,6 +151,8 @@ public interface Map<K,V> {
     int size();
 
     /**
+     * 判断该Map是否为空
+     *
      * Returns <tt>true</tt> if this map contains no key-value mappings.
      *
      * @return <tt>true</tt> if this map contains no key-value mappings
@@ -146,6 +160,8 @@ public interface Map<K,V> {
     boolean isEmpty();
 
     /**
+     * 判断该Map是否包含指定的key值（该key值只含有一个对应的映射）
+     *
      * Returns <tt>true</tt> if this map contains a mapping for the specified
      * key.  More formally, returns <tt>true</tt> if and only if
      * this map contains a mapping for a key <tt>k</tt> such that
@@ -165,6 +181,8 @@ public interface Map<K,V> {
     boolean containsKey(Object key);
 
     /**
+     * 判断该Map是否存在入参value值
+     *
      * Returns <tt>true</tt> if this map maps one or more keys to the
      * specified value.  More formally, returns <tt>true</tt> if and only if
      * this map contains at least one mapping to a value <tt>v</tt> such that
@@ -185,6 +203,12 @@ public interface Map<K,V> {
     boolean containsValue(Object value);
 
     /**
+     * 返回key对应的value值
+     * 如果指定key不存在，则返回null
+     *
+     * 如果这个Map本身允许存储null为对应值的话，则该返回情况具有二义性
+     * containsKey方法可以区分这两种情况
+     *
      * Returns the value to which the specified key is mapped,
      * or {@code null} if this map contains no mapping for the key.
      *
@@ -214,6 +238,13 @@ public interface Map<K,V> {
     // Modification Operations
 
     /**
+     * 将一个键值对插入Map中
+     * 当key已经存在时，将对其映射的value进行更新，并返回旧值
+     * 如果key不存在，返回null
+     *
+     * 需要注意的是：
+     * 当Map允许value值为null时，返回值同样会产生二义性。
+     *
      * Associates the specified value with the specified key in this map
      * (optional operation).  If the map previously contained a mapping for
      * the key, the old value is replaced by the specified value.  (A map
@@ -240,6 +271,9 @@ public interface Map<K,V> {
     V put(K key, V value);
 
     /**
+     * 如果Map存在对应key，则删除该键值对并返回对应的value
+     * 不存在则返回null
+     *
      * Removes the mapping for a key from this map if it is present
      * (optional operation).   More formally, if this map contains a mapping
      * from key <tt>k</tt> to value <tt>v</tt> such that
@@ -275,6 +309,9 @@ public interface Map<K,V> {
     // Bulk Operations
 
     /**
+     * 将入参Map中的所有值put进该Map中
+     * 如果在执行期间m发生了更改，那么结果是未知的。
+     *
      * Copies all of the mappings from the specified map to this map
      * (optional operation).  The effect of this call is equivalent to that
      * of calling {@link #put(Object,Object) put(k, v)} on this map once
@@ -296,6 +333,8 @@ public interface Map<K,V> {
     void putAll(Map<? extends K, ? extends V> m);
 
     /**
+     * 移除该Map中的所有键值对
+     *
      * Removes all of the mappings from this map (optional operation).
      * The map will be empty after this call returns.
      *
@@ -308,6 +347,11 @@ public interface Map<K,V> {
     // Views
 
     /**
+     * 返回一个基于该Map的包含所有key的Set类型的视图。
+     * 对该视图的修改将会同步到Map中，对Map的修改也会同步到该视图中
+     *
+     * 返回的视图支持删除操作，但并不支持add和addAll操作
+     *
      * Returns a {@link Set} view of the keys contained in this map.
      * The set is backed by the map, so changes to the map are
      * reflected in the set, and vice-versa.  If the map is modified
@@ -325,6 +369,10 @@ public interface Map<K,V> {
     Set<K> keySet();
 
     /**
+     * 返回一个基于该Map的包含所有value的Collection类型的视图。
+     * 同样，修改会在两者间互相同步。
+     * 支持删除操作而不支持添加操作。
+     *
      * Returns a {@link Collection} view of the values contained in this map.
      * The collection is backed by the map, so changes to the map are
      * reflected in the collection, and vice-versa.  If the map is
@@ -342,6 +390,10 @@ public interface Map<K,V> {
     Collection<V> values();
 
     /**
+     * 返回一个 {@link Set<Map.Entry<K, V>>} 类型的视图，该视图包含了Map中的所有键值对
+     * 对二者的修改会同步到对方身上
+     * 同样支持对视图中元素的删除而不支持添加
+     *
      * Returns a {@link Set} view of the mappings contained in this map.
      * The set is backed by the map, so changes to the map are
      * reflected in the set, and vice-versa.  If the map is modified
@@ -360,6 +412,9 @@ public interface Map<K,V> {
     Set<Map.Entry<K, V>> entrySet();
 
     /**
+     * 一个Map的键值对，是Map.entrySet的返回类型
+     * 获得该引用的唯一方式是通过entrySet返回集合视图
+     *
      * A map entry (key-value pair).  The <tt>Map.entrySet</tt> method returns
      * a collection-view of the map, whose elements are of this class.  The
      * <i>only</i> way to obtain a reference to a map entry is from the
@@ -374,6 +429,8 @@ public interface Map<K,V> {
      */
     interface Entry<K,V> {
         /**
+         * 获得key
+         *
          * Returns the key corresponding to this entry.
          *
          * @return the key corresponding to this entry
@@ -384,6 +441,8 @@ public interface Map<K,V> {
         K getKey();
 
         /**
+         * 获得value
+         *
          * Returns the value corresponding to this entry.  If the mapping
          * has been removed from the backing map (by the iterator's
          * <tt>remove</tt> operation), the results of this call are undefined.
@@ -396,6 +455,8 @@ public interface Map<K,V> {
         V getValue();
 
         /**
+         * 设置value并返回旧值
+         *
          * Replaces the value corresponding to this entry with the specified
          * value (optional operation).  (Writes through to the map.)  The
          * behavior of this call is undefined if the mapping has already been
@@ -418,6 +479,8 @@ public interface Map<K,V> {
         V setValue(V value);
 
         /**
+         * 判断equals的方式是用equals方法判断两者的key和value是不是分别相等
+         *
          * Compares the specified object with this entry for equality.
          * Returns <tt>true</tt> if the given object is also a map entry and
          * the two entries represent the same mapping.  More formally, two
@@ -438,6 +501,8 @@ public interface Map<K,V> {
         boolean equals(Object o);
 
         /**
+         * 这个键值对的hashCode被定义为：key.hashCode() ^ value.hashCode()
+         *
          * Returns the hash code value for this map entry.  The hash code
          * of a map entry <tt>e</tt> is defined to be: <pre>
          *     (e.getKey()==null   ? 0 : e.getKey().hashCode()) ^
@@ -456,6 +521,8 @@ public interface Map<K,V> {
         int hashCode();
 
         /**
+         * 获得一个比较器
+         *
          * Returns a comparator that compares {@link Map.Entry} in natural order on key.
          *
          * <p>The returned comparator is serializable and throws {@link
@@ -531,6 +598,8 @@ public interface Map<K,V> {
     // Comparison and hashing
 
     /**
+     * 只有当给定对象也是Map切两个Map有相同的映射集时（利用entrySet返回的视图用equals判断相等），返回true
+     *
      * Compares the specified object with this map for equality.  Returns
      * <tt>true</tt> if the given object is also a map and the two maps
      * represent the same mappings.  More formally, two maps <tt>m1</tt> and
@@ -545,6 +614,8 @@ public interface Map<K,V> {
     boolean equals(Object o);
 
     /**
+     * entrySet()方法返回的视图中所有entry的hashCode之和
+     *
      * Returns the hash code value for this map.  The hash code of a map is
      * defined to be the sum of the hash codes of each entry in the map's
      * <tt>entrySet()</tt> view.  This ensures that <tt>m1.equals(m2)</tt>
@@ -562,6 +633,8 @@ public interface Map<K,V> {
     // Defaultable methods
 
     /**
+     * 如果Map包含该key则返回对应的value，否则返回入参的默认defaultValue
+     *
      * Returns the value to which the specified key is mapped, or
      * {@code defaultValue} if this map contains no mapping for the key.
      *
@@ -591,6 +664,12 @@ public interface Map<K,V> {
     }
 
     /**
+     * 利用函数接口BiConsumer（Consumer的二元形式）来完成对每一个键值对执行相应的操作
+     * 具体使用Lambda表达式完成：
+     * Map.foreach( (Integer o1, Integer o2) -> {o1 += 1; o2 += 2;} )
+     * o1代表key，o2代表value（因为传参是 .accpet(k, v)，所以第一个参数是k，第二个参数是v）
+     * 上述操作代表对key和其对应value分别执行+1操作
+     *
      * Performs the given action for each entry in this map until all entries
      * have been processed or the action throws an exception.   Unless
      * otherwise specified by the implementing class, actions are performed in
@@ -632,6 +711,8 @@ public interface Map<K,V> {
     }
 
     /**
+     * 对Map中所有元素替换为操作后的结果，入参为一组操作（Lambda表达式）
+     *
      * Replaces each entry's value with the result of invoking the given
      * function on that entry until all entries have been processed or the
      * function throws an exception.  Exceptions thrown by the function are
@@ -696,6 +777,9 @@ public interface Map<K,V> {
     }
 
     /**
+     * 如果Map中不存在指定的key或key所对应的value值为null，则调用put方法进行插入/更新，并返回原来的值
+     * 如果已经存在且其值不为null的话，直接返回
+     *
      * If the specified key is not already associated with a value (or is mapped
      * to {@code null}) associates it with the given value and returns
      * {@code null}, else returns the current value.
@@ -748,6 +832,10 @@ public interface Map<K,V> {
     }
 
     /**
+     * 移除某个键值对
+     * 当用get(key)方法获得的value与传入的value不等时，或传入的key不存在时，返回false
+     * 否则，利用remove方法移除该键值对
+     *
      * Removes the entry for the specified key only if it is currently
      * mapped to the specified value.
      *
@@ -792,6 +880,9 @@ public interface Map<K,V> {
     }
 
     /**
+     * 仅当传入的value和key所对应的value不相等或该key不存在时，返回false
+     * 否则，调用put方法用新的value值覆盖旧的value值并返回旧的value值
+     *
      * Replaces the entry for the specified key only if currently
      * mapped to the specified value.
      *
@@ -844,6 +935,11 @@ public interface Map<K,V> {
     }
 
     /**
+     * 只要key存在，就调用put方法改变key所对应的值为入参value，并返回原来的值
+     * （即使原来的值为null也会进行调用）
+     *
+     * 当key不存在的时候将会返回null值。
+     *
      * Replaces the entry for the specified key only if it is
      * currently mapped to some value.
      *
@@ -890,6 +986,9 @@ public interface Map<K,V> {
     }
 
     /**
+     * 当key不存在或key对应的value值为null时，根据对key的指定操作（Lambda表达式）计算出一个新的value，并赋值给key对应的value
+     * 返回新的value
+     *
      * If the specified key is not already associated with a value (or is mapped
      * to {@code null}), attempts to compute its value using the given mapping
      * function and enters it into this map unless {@code null}.
@@ -964,6 +1063,12 @@ public interface Map<K,V> {
     }
 
     /**
+     * 与computeIfAbsent相反的操作
+     * 如果指定的key存在且对应的value值不为null时，通过对key和旧value的指定运算计算一个新value并赋到原来key的映射上
+     *
+     * 需要注意，如果计算出的newValue值为null时，会移除指定的键值对并返回null
+     * 更新后返回新的value
+     *
      * If the value for the specified key is present and non-null, attempts to
      * compute a new mapping given the key and its current mapped value.
      *
@@ -1109,6 +1214,8 @@ public interface Map<K,V> {
     }
 
     /**
+     * 尝试通过key对应的value和传入的value计算出一个新的value
+     *
      * If the specified key is not already associated with a value or is
      * associated with null, associates it with the given non-null value.
      * Otherwise, replaces the associated value with the results of the given
